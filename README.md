@@ -57,7 +57,11 @@ STOMP 사용 시 **BrokerRelay 기능을 통한 빠른 구독 토픽 전환 & �
 ```mermaid
 sequenceDiagram
     User ->> Server: GET(/id) 게시글 요청
+    Server-->>User: 추천 수를 제외한 게시글 반환
+    
+    User ->> Server: GET(/id/like) 추천 수 요청
     Server --) User: 추천 수 변화와 함께 게시글 응답, SSE로 변화 알림
+    
 ```
 ```mermaid
 sequenceDiagram
@@ -65,7 +69,9 @@ sequenceDiagram
     Server ->> DB: 추천 처리
     DB -->> Server: 추천 응답
     Server -->> User: 추천 성공 여부 응답
-    Server -) Broker: 추천 수 갱신 이벤트 발행
+    alt 추천 성공 시
+        Server -) Broker: 추천 수 갱신 이벤트 발행
+    end
 ```
 
 
@@ -95,8 +101,10 @@ sequenceDiagram
     Server ->> DB: 추천 트랜잭션 처리
     DB -->> Server: 추천 성공 여부 응답
     Server -) User: 추천 성공 여부 응답
-    
-    Server -) Broker: (추천 성공 시)추천 이벤트 발행
+
+  alt 추천 성공 시
+    Server -) Broker: 추천 수 갱신 이벤트 발행
+  end
 
 ```
 ## 검증 시나리오
