@@ -1,5 +1,6 @@
 package gogradually.sseandwebsocket.service
 
+import gogradually.sseandwebsocket.domain.MyEntity
 import gogradually.sseandwebsocket.event.CountChangedEvent
 import gogradually.sseandwebsocket.repository.MyEntityRepository
 import org.springframework.context.ApplicationEventPublisher
@@ -19,4 +20,12 @@ class MyEntityService(
         myEntity?.count?.let { applicationEventPublisher.publishEvent(CountChangedEvent(id, it, LocalDateTime.now())) }
     }
 
+    @Transactional
+    fun enroll(id: Long): MyEntity {
+        return myEntityRepository.save(MyEntity(id))
+    }
+
+    fun find(id: Long): MyEntity? {
+        return myEntityRepository.findById(id).orElse(null)
+    }
 }
