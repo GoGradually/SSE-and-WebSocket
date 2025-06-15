@@ -11,13 +11,13 @@ class BrokerService {
     val sseMap: MutableMap<Long, MutableList<SseEmitter>> = ConcurrentHashMap()
 
     fun addSubscribe(id: Long, sseEmitter : SseEmitter){
-        val subscribers = sseMap.computeIfAbsent(id, ) { CopyOnWriteArrayList() }
+        val subscribers = sseMap.computeIfAbsent(id ) { CopyOnWriteArrayList() }
         subscribers.add(sseEmitter)
     }
 
     fun spreadEvent(changedEvent: CountChangedEvent) {
         val subscribers = sseMap.computeIfAbsent(changedEvent.id) { CopyOnWriteArrayList() }
         subscribers
-            .map { sseEmitter -> sseEmitter.send(changedEvent) }
+            .forEach { sseEmitter -> sseEmitter.send(changedEvent) }
     }
 }
